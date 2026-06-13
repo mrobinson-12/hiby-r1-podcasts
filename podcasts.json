@@ -1,0 +1,13 @@
+{
+    "podcasts": {
+        "https://podcasts.files.bbci.co.uk/pff": {
+            "last_episode": "Episode Title Here"
+        },
+        "https://example.com/anotherpodcast.rss": {
+            "last_episode": ""
+        },
+        "https://podcasts.files.bbci.co.uk/p02nq0gn.rss": {
+            "last_episode": ""
+        }
+    }
+}
