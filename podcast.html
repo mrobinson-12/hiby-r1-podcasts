@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Podcast</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+    <script src="podcast.js" defer></script>
+</head>
+<body>
+    <div id="podcast-details" class="p-4 border rounded shadow-md space-y-3">
+        <div class="flex space-x-3">
+            <h2 id="podcast-title" class="text-2xl font-semibold mb-2"></h2>
+        </div>
+        <p id="podcast-description" class="mb-4"></p>
+        <img id="podcast-image" class=" h-64 object-cover mb-4" src="" alt="Podcast Image">
+      <h3>Recent Episodes:</h3>
+      <ul id="episodes" class="list-disc list-inside">
+    </ul>
+      <button id="upload-button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Upload Recent Episodes</button>
+    </div>
+
+</body>
+</html>

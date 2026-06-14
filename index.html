@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MP3 Transfer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="index.js" defer></script>
+</head>
+<body class="p-3 bg-gray-100">
+    <h1 class="text-3xl font-bold">MP3 Transfer</h1>
+    <div class="flex p-2 space-x-3">
+        <button id="ping" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Ping</button>
+        <button id="get" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Get all podcasts</button>
+        <button id="add-new" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add new podcast</button>
+    </div>
+    <p id="response"></p>
+    <div id="podcasts" class="flex justify-center"></div>
+</body>
+</html>

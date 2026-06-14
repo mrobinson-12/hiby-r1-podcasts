@@ -1,7 +1,10 @@
+from starlette.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 import codething
 from fastapi import FastAPI
 from fastapi import Query
 app = FastAPI()
+
 
 @app.get("/ping")
 def ping():
@@ -16,6 +19,22 @@ def upload(url: str = Query(...)):
     return codething.addpodcast(url)
 
 @app.get("/podcast/metadata")
-def getmetadata(url: str = Query(...)):
-    return codething.getpodcast(url)
+def getmetadata(slug: str = Query(...)):
+    return codething.getpodcast(slug)
 
+@app.get("/podcast/upload")
+def upload(url: str = Query(...), name: str = Query(...), rss: str = Query(...)):
+    return codething.upload(url, name, rss)
+
+@app.get("/podcast/get")
+def getpodcasts():
+    return codething.getpodcasts()
+
+@app.get("/podcast/{name}")
+async def podcast_page(name: str):
+    if name.endswith(".js") or name.endswith(".css"):
+        return FileResponse(name)
+    return FileResponse("podcast.html")
+
+
+app.mount("/", StaticFiles(directory=".", html=True), name="static")
