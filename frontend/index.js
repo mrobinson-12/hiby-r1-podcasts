@@ -19,13 +19,13 @@ getbutton.addEventListener("click", () => {
             images.forEach(([name, description, url, slug, rss]) => {
                 div=document.createElement("a")
                 div.href="/podcast/"+slug
-                img = document.createElement("img")
-                img.src = url
-                img.className="w-48 mr-2"
+                img1 = document.createElement("img")
+                img1.src = url
+                img1.className="w-48 mr-2"
                 //text=document.createElement("p")
                 //text.textContent=name
                 //text.className="mr-2"
-                div.appendChild(img)
+                div.appendChild(img1)
                 //div.appendChild(text)
 
                 document.getElementById("podcasts").appendChild(div)

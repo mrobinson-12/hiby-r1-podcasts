@@ -13,7 +13,9 @@ def ping():
 @app.get("/podcast/recent")
 def getepisode(url: str = Query(...)):
     return codething.getrecentepisodes(url)
-
+@app.get("/podcast/delete")
+def deletepodcast(url: str = Query(...)):
+    return codething.deletepodcast(url)
 @app.get("/podcast/new")
 def upload(url: str = Query(...)):
     return codething.addpodcast(url)
@@ -32,9 +34,14 @@ def getpodcasts():
 
 @app.get("/podcast/{name}")
 async def podcast_page(name: str):
-    if name.endswith(".js") or name.endswith(".css"):
+    if name.endswith(".js") or name.endswith(".css") or name.endswith("delete"):
         return FileResponse(name)
-    return FileResponse("podcast.html")
+    return FileResponse("frontend/podcast.html")
+
+@app.get("/")
+async def serve_index():
+    return FileResponse("frontend/index.html")
 
 
-app.mount("/", StaticFiles(directory=".", html=True), name="static")
+
+app.mount("/static", StaticFiles(directory="frontend"), name="static")

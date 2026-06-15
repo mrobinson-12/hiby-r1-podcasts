@@ -6,17 +6,20 @@ from dotenv import load_dotenv
 from multiprocessing.pool import ThreadPool
 import mimetypes
 import re
+# Load envs
 load_dotenv()
 
 def pingaudiobookshelf():
     response = requests.get(f"{os.environ.get("AUDIOBOOKSHELF_BASE_URL")}/ping")
     return response
 
+#gets all podcasts
 def getdata():
     with open("podcasts.json", "r") as f:
         loaddata = json.load(f)
     return loaddata
 
+#adds a podcast to the database
 def addpodcast(url):
     loaddata=getdata()
     with open("podcasts.json", "w") as f:
@@ -24,6 +27,7 @@ def addpodcast(url):
         json.dump(loaddata, f, indent=4)
     return "Podcast added"
 
+#gets metadata of a podcast
 def getpodcast(slug):
     if pingaudiobookshelf().status_code == 200:
         podcasts = getdata()["podcasts"]
@@ -48,6 +52,7 @@ def getpodcast(slug):
         metadata.append(rss)
         return metadata
 
+#gets recent episodes of a podcast
 def getrecentepisodes(url):
 
     loaddata=getdata()
@@ -83,8 +88,7 @@ def getrecentepisodes(url):
     else:
         return []
 
-
-# TODO: Get uploading work most of the time
+# Uploading works most of the time but sometimes it doesnt downlaod the file properly. This is because of the file extension I believe. TODO: fix this
 def upload(url, name, rss):
     loaddata=getdata()
     r = requests.get(url, stream=True, allow_redirects=True)
@@ -102,9 +106,19 @@ def upload(url, name, rss):
         json.dump(loaddata, f, indent=4)
     os.remove(f"{name}.mp3")
 
+# Gets all podcasts
 def getpodcasts():
     loaddata=getdata()
     slugs = [data["slug"] for data in loaddata["podcasts"].values()]
     with ThreadPool() as pool:
         return pool.map(getpodcast, slugs)
 
+# Deletes a podcast
+def deletepodcast(url):
+    loaddata=getdata()
+    if url in loaddata["podcasts"]:
+        loaddata["podcasts"].pop(url)
+        with open("podcasts.json", "w") as f:
+            json.dump(loaddata, f, indent=4)
+            return "Podcast deleted"
+    return "Podcast not found"

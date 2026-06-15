@@ -1,24 +1,16 @@
 {
     "podcasts": {
-        "https://podcasts.subsplash.com/bswxk2v/podcast.rss": {
-            "slug": "lifepoint",
-            "last_episode": "God Looks at the Heart || Jason Coleman (Midweek Word)"
-        },
-        "https://feeds.megaphone.fm/ESP9792844572": {
-            "slug": "ABC-News-Podcasts",
-            "last_episode": "Sunday, June 14, 2026 04:00AM ET"
-        },
-        "https://www.abc.net.au/feeds/9673426/podcast.xml": {
-            "slug": "abc-kids-classic",
-            "last_episode": ""
-        },
-        "https://www.omnycontent.com/d/playlist/fa326977-3de5-4283-9b8b-af3500c58607/d49247d1-94a1-4e8e-bdd1-af4600179d73/a3cc5127-fb55-41fa-a342-af4600179d81/podcast.rss": {
-            "slug": "kyle-and-jackie-o",
-            "last_episode": ""
-        },
         "https://www.omnycontent.com/d/playlist/820f09cf-2ace-4180-a92d-aa4c0008f5fb/0786e9ff-0519-43d3-a0cd-aa4c0176ad25/2bf97b40-59cd-424a-ba35-aa4c0176ad25/podcast.rss": {
             "slug": "hamish-and-andy",
             "last_episode": "Hamish and Andy return March 1"
+        },
+        "https://feeds.megaphone.fm/LMG3928170156": {
+            "slug": "LMG3928170156",
+            "last_episode": ""
+        },
+        "https://anchor.fm/s/eb29d7e0/podcast/rss": {
+            "slug": "rss",
+            "last_episode": ""
         }
     }
 }

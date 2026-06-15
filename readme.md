@@ -12,3 +12,4 @@ This is a simple tool I made to sync my podcasts and music to my mp3 player, the
  - Fix bug where it doesnt upload because of the file type
  - Idk what else
 
+If you would like another MP3 player added feel free to open an issue or mak a pull request.
