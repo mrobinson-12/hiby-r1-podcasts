@@ -100,7 +100,7 @@ def upload(url, name, rss):
     with open(name, "wb") as f:
         for chunk in r.iter_content(chunk_size=65536):
             f.write(chunk)
-    requests.post("http://192.168.1.89:4399/upload", data={"path": "/data/mnt/sd_0/testing/Podcast/"}, files={"files[]": open(f"{name}.mp3", "rb")})
+    requests.post(f"http://{os.environ.get('HIBY_URL')}:4399/upload", data={"path": "/data/mnt/sd_0/testing/Podcast/"}, files={"files[]": open(f"{name}.mp3", "rb")})
     loaddata["podcasts"][rss]["last_episode"] = name
     with open("podcasts.json", "w") as f:
         json.dump(loaddata, f, indent=4)
@@ -122,3 +122,9 @@ def deletepodcast(url):
             json.dump(loaddata, f, indent=4)
             return "Podcast deleted"
     return "Podcast not found"
+
+def settings(setting, value):
+    if setting == "hiby-url":
+        os.environ["HIBY_URL"] = value
+    if setting == "api-key":
+        os.environ["API_KEY"] = value

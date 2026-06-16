@@ -2,6 +2,11 @@ pingbutton = document.getElementById("ping")
 response = document.getElementById("response")
 getbutton = document.getElementById("get")
 addbutton = document.getElementById("add-new")
+
+document.addEventListener('DOMContentLoaded', () => {
+    getbutton.click()
+})
+
 pingbutton.addEventListener("click", () => {
     fetch("/ping")
         .then(response => response.text())

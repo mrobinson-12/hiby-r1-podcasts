@@ -1,16 +1,3 @@
 {
-    "podcasts": {
-        "https://www.omnycontent.com/d/playlist/820f09cf-2ace-4180-a92d-aa4c0008f5fb/0786e9ff-0519-43d3-a0cd-aa4c0176ad25/2bf97b40-59cd-424a-ba35-aa4c0176ad25/podcast.rss": {
-            "slug": "hamish-and-andy",
-            "last_episode": "Hamish and Andy return March 1"
-        },
-        "https://feeds.megaphone.fm/LMG3928170156": {
-            "slug": "LMG3928170156",
-            "last_episode": ""
-        },
-        "https://anchor.fm/s/eb29d7e0/podcast/rss": {
-            "slug": "rss",
-            "last_episode": ""
-        }
-    }
+    "podcasts": {}
 }
