@@ -4,7 +4,7 @@ import codething
 from fastapi import FastAPI
 from fastapi import Query
 app = FastAPI()
-# This is the fastapi file which serves the api for the frontend.
+# This is the fastapi file which serves the api for the frontend. (When it works)
 
 # Pings audiobookshelf
 @app.get("/ping")
@@ -47,6 +47,14 @@ async def podcast_page(name: str):
     if name.endswith(".js") or name.endswith(".css") or name.endswith("delete"):
         return FileResponse(name)
     return FileResponse("frontend/podcast.html")
+
+@app.get("/settings")
+async def settings(setting: str = Query(...), value: str = Query(...)):
+    return codething.settings(setting, value)
+
+@app.get("/setting")
+async def settings():
+    return FileResponse("frontend/settings.html")
 
 # Serves the home page
 @app.get("/")

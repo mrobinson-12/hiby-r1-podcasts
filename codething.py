@@ -9,6 +9,7 @@ import re
 # Load envs
 load_dotenv()
 
+# Pings audiobookshelf
 def pingaudiobookshelf():
     response = requests.get(f"{os.environ.get("AUDIOBOOKSHELF_BASE_URL")}/ping")
     return response
@@ -127,4 +128,7 @@ def settings(setting, value):
     if setting == "hiby-url":
         os.environ["HIBY_URL"] = value
     if setting == "api-key":
-        os.environ["API_KEY"] = value
+        os.environ["AUDIOBOOKSHELF_API_KEY"] = value
+
+# TODO: Fix slug generation
+# TODO: Fix upload error with not mp3 files
