@@ -1,3 +1,5 @@
+import subprocess
+
 import requests
 import os
 import json
@@ -8,10 +10,9 @@ import mimetypes
 import re
 # Load envs
 load_dotenv()
-
 # Pings audiobookshelf
 def pingaudiobookshelf():
-    response = requests.get(f"{os.environ.get("AUDIOBOOKSHELF_BASE_URL")}/ping")
+    response = requests.get(f"{os.environ.get('AUDIOBOOKSHELF_BASE_URL')}/ping")
     return response
 
 #gets all podcasts
@@ -23,8 +24,17 @@ def getdata():
 #adds a podcast to the database
 def addpodcast(url):
     loaddata=getdata()
+    response=requests.post(f"{os.environ.get('AUDIOBOOKSHELF_BASE_URL')}/api/podcasts/feed", json={"rssFeed": url}, headers={"Authorization": f"Bearer {os.environ.get('AUDIOBOOKSHELF_API_KEY')}"})
+    title=(response.json()['podcast']['metadata']['title'])
+    title=title.replace(" ", "-")
+    title = title.replace("&", "and")
+    title = title.replace("/", "-")
+    title = title.replace(":", "")
+    title = title.replace("?", "")
+    title = title.replace(",", "")
+    title = title.replace(".", "")
     with open("podcasts.json", "w") as f:
-        loaddata["podcasts"][unquote(url)] = {"slug": f"{url.split("/")[-1]}", "last_episode": ""}
+        loaddata["podcasts"][unquote(url)] = {"slug": title, "last_episode": ""}
         json.dump(loaddata, f, indent=4)
     return "Podcast added"
 
@@ -89,23 +99,33 @@ def getrecentepisodes(url):
     else:
         return []
 
-# Uploading works most of the time but sometimes it doesnt downlaod the file properly. This is because of the file extension I believe. TODO: fix this
-def upload(url, name, rss):
+def upload(url, name, slug):
     loaddata=getdata()
     r = requests.get(url, stream=True, allow_redirects=True)
     content_type = r.headers.get("Content-Type", "").split(";")[0].strip()
     ext = mimetypes.guess_extension(content_type) or ".mp3"
+    name1=re.sub(r'[\\/:*?"<>|#&]', "-", name).strip()
     name = f"{name}{ext}"
-    name = name.replace('\xa0', ' ').strip()
-    name = re.sub(r'\.(mp3|m4a|ogg|aac|wav|flac)$', '', name)
+    name = re.sub(r'[\\/:*?"<>|#&ea]', "l", name).strip()
     with open(name, "wb") as f:
         for chunk in r.iter_content(chunk_size=65536):
             f.write(chunk)
-    requests.post(f"http://{os.environ.get('HIBY_URL')}:4399/upload", data={"path": "/data/mnt/sd_0/testing/Podcast/"}, files={"files[]": open(f"{name}.mp3", "rb")})
+    subprocess.run([
+        "ffmpeg",
+        "-i", name,
+        "-ar", "16000",
+        "-ac", "1",
+        "-c:a", "libmp3lame",
+        f"{name1}.mp3"
+    ], check=True)
+    requests.post(f"http://{os.environ.get('HIBY_URL')}:4399/upload", data={"path": "/data/mnt/sd_0/testing/Podcast/"}, files={"files[]": open(f"{name1}.mp3", "rb")})
+    rss=getpodcast(slug)[4]
     loaddata["podcasts"][rss]["last_episode"] = name
     with open("podcasts.json", "w") as f:
         json.dump(loaddata, f, indent=4)
-    os.remove(f"{name}.mp3")
+    os.remove(f"{name}")
+    os.remove(f"{name1}.mp3")
+    return name1 + " Uploaded"
 
 # Gets all podcasts
 def getpodcasts():
@@ -130,5 +150,3 @@ def settings(setting, value):
     if setting == "api-key":
         os.environ["AUDIOBOOKSHELF_API_KEY"] = value
 
-# TODO: Fix slug generation
-# TODO: Fix upload error with not mp3 files

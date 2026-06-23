@@ -33,8 +33,8 @@ def getmetadata(slug: str = Query(...)):
 
 # Uploads a podcast
 @app.get("/podcast/upload")
-def upload(url: str = Query(...), name: str = Query(...), rss: str = Query(...)):
-    return codething.upload(url, name, rss)
+def upload(url: str = Query(...), name: str = Query(...), slug: str = Query(...)):
+    return codething.upload(url, name, slug)
 
 # Gets all podcasts metadata
 @app.get("/podcast/get")

@@ -4,6 +4,7 @@ This is a simple tool I made to sync my podcasts and music to my mp3 player, the
 
 ### SETUP
 
+Clone the repo first!
 To set this up, just populate your .env with proper values then install the requirements.txt in your venv with pip install -r requirements.txt. Then run uvicorn main:app.
 
 ### TODO
@@ -22,7 +23,6 @@ If you would like another MP3 player added feel free to open an issue or make a 
 This is not endorsed by or affiliated with Hiby or the Hiby R1 product. Any wording, logos, or trademarks used in this project are property of their respective owners.
 
 ### AI Disclaimer
-
 - Gitignore fully AI
 - Autocomplete used
 - Claude used when I had actually had no clue but no copy pasting just explaining.

@@ -46,5 +46,9 @@ addbutton.addEventListener("click", () => {
         .then(response => response.text())
         .then(data => {
             response.textContent = data
+            sleep(1000)
+            location.reload()
         })
 })
+
+//TODO UI Redo
