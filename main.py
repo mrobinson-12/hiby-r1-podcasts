@@ -14,6 +14,7 @@ def trigger_git_pull():
             text=True,
             timeout=15
         )
+        os.system("sudo systemctl restart hiby")
         return result.returncode == 0
     except Exception:
         return False
