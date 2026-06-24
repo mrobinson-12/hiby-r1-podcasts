@@ -35,7 +35,7 @@ def getdata():
     with open("podcasts.json", "r") as f:
         loaddata = json.load(f)
         return loaddata
-    
+
 def addpodcast(id):
     data=getdata()
     data["podcasts"][str(id)] = {
@@ -117,5 +117,5 @@ def deletepodcast(id):
             json.dump(loaddata, f, indent=4)
             return "Podcast deleted"
     return "Podcast not found"
-
+getdata()
 #TODO: Add settings
