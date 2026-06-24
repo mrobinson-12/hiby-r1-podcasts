@@ -64,6 +64,7 @@ def getrecentepisodes(id):
     response=requests.get(f"https://api.podcastindex.org/api/1.0/episodes/byfeedid?id={id}&since={lasttime}", headers=authpi())
     response.raise_for_status()
     episodes=response.json()["items"]
+    episodes.sort(key=lambda episode: episode["datePublished"])
     episodes = episodes[:10]
     episodeslist=[]
     for episode in episodes:
