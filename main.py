@@ -1,11 +1,27 @@
 from starlette.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import codething
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
 from fastapi import Query
+import subprocess
+import threading
 app = FastAPI()
+def trigger_git_pull():
+    try:
+        result = subprocess.run(
+            ["git", "pull"],
+            capture_output=True,
+            text=True,
+            timeout=15
+        )
+        return result.returncode == 0
+    except Exception:
+        return False
 # This is the fastapi file which serves the api for the frontend. (When it works)
-
+@app.post("/webhook")
+def webhook(background_tasks: BackgroundTasks):
+    background_tasks.add_task(trigger_git_pull)
+    return {"status": "Pulling"}
 # Gets the recent episodes of a podcast
 @app.get("/podcast/recent")
 def getepisode(id: str = Query(...)):
