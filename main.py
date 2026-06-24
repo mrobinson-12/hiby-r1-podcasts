@@ -4,7 +4,7 @@ import codething
 from fastapi import FastAPI, BackgroundTasks
 from fastapi import Query
 import subprocess
-import threading
+import os
 app = FastAPI()
 def trigger_git_pull():
     try:
@@ -14,6 +14,7 @@ def trigger_git_pull():
             text=True,
             timeout=15
         )
+        os.system("systemctl restart hiby")
         return result.returncode == 0
     except Exception:
         return False
