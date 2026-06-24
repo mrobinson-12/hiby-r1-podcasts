@@ -26,13 +26,13 @@ def authpi():
     return headers
 
 def getdata():
-    if not os.path.exists(os.path.dirname(os.path.join(os.path.abspath(__file__), "podcasts.json"))):
+    if not os.path.exists("podcasts.json"):
         default_data = {"podcasts": {}}
-        with open(os.path.join(os.path.abspath(__file__), "podcasts.json"), "w") as f:
+        with open("podcasts.json", "w") as f:
             json.dump(default_data, f, indent=4)
         return default_data
 
-    with open(os.path.join(os.path.abspath(__file__), "podcasts.json"), "r") as f:
+    with open("podcasts.json", "r") as f:
         loaddata = json.load(f)
         return loaddata
 
@@ -41,7 +41,7 @@ def addpodcast(id):
     data["podcasts"][str(id)] = {
         "last_episode_time": 0
     }
-    with open(os.path.join(os.path.abspath(__file__), "podcasts.json"), "w") as f:
+    with open("podcasts.json", "w") as f:
         json.dump(data, f, indent=4)
 
 
@@ -103,7 +103,7 @@ def upload(id):
     ], check=True)
     requests.post(f"http://{os.environ.get('HIBY_URL')}:4399/upload", data={"path": "/data/mnt/sd_0/testing/Podcast/"}, files={"files[]": open(f"{name1}.mp3", "rb")})
     loaddata["podcasts"][id]["last_episode_time"] = datepublished
-    with open(os.path.join(os.path.abspath(__file__), "podcasts.json"), "w") as f:
+    with open("podcasts.json", "w") as f:
         json.dump(loaddata, f, indent=4)
     os.remove(f"{name}")
     os.remove(f"{name1}.mp3")
