@@ -6,35 +6,32 @@ from fastapi import Query
 app = FastAPI()
 # This is the fastapi file which serves the api for the frontend. (When it works)
 
-# Pings audiobookshelf
-@app.get("/ping")
-def ping():
-    return {"status": codething.pingaudiobookshelf().status_code}
-
 # Gets the recent episodes of a podcast
 @app.get("/podcast/recent")
-def getepisode(url: str = Query(...)):
-    return codething.getrecentepisodes(url)
+def getepisode(id: str = Query(...)):
+    return codething.getrecentepisode(id)
+@app.get("/podcast/recents")
+def getepisode(id: str = Query(...)):
+    return codething.getrecentepisodes(id)
 
-# Deletes a podcast
 @app.get("/podcast/delete")
-def deletepodcast(url: str = Query(...)):
-    return codething.deletepodcast(url)
+def deletepodcast(id: str = Query(...)):
+    return codething.deletepodcast(id)
 
 # Adds a podcast
 @app.get("/podcast/new")
-def upload(url: str = Query(...)):
-    return codething.addpodcast(url)
+def upload(id: str = Query(...)):
+    return codething.addpodcast(id)
 
 # Gets the metadata of a podcast
 @app.get("/podcast/metadata")
-def getmetadata(slug: str = Query(...)):
-    return codething.getpodcast(slug)
+def getmetadata(id: str = Query(...)):
+    return codething.getpodcastinfo(id)
 
 # Uploads a podcast
 @app.get("/podcast/upload")
-def upload(url: str = Query(...), name: str = Query(...), slug: str = Query(...)):
-    return codething.upload(url, name, slug)
+def upload(id: str = Query(...)):
+    return codething.upload(id)
 
 # Gets all podcasts metadata
 @app.get("/podcast/get")
@@ -42,10 +39,10 @@ def getpodcasts():
     return codething.getpodcasts()
 
 # Serves the podcast page
-@app.get("/podcast/{name}")
-async def podcast_page(name: str):
-    if name.endswith(".js") or name.endswith(".css") or name.endswith("delete"):
-        return FileResponse(name)
+@app.get("/podcast/{id}")
+async def podcast_page(id: int):
+    if str(id).endswith(".js") or str(id).endswith(".css") or str(id).endswith("delete"):
+        return FileResponse(id)
     return FileResponse("frontend/podcast.html")
 
 @app.get("/settings")

@@ -1,111 +1,87 @@
+import hashlib
+import json
+import mimetypes
+import os
+import re
 import subprocess
+import time
 
 import requests
-import os
-import json
-from urllib.parse import unquote
 from dotenv import load_dotenv
-from multiprocessing.pool import ThreadPool
-import mimetypes
-import re
-# Load envs
-load_dotenv()
-# Pings audiobookshelf
-def pingaudiobookshelf():
-    response = requests.get(f"{os.environ.get('AUDIOBOOKSHELF_BASE_URL')}/ping")
-    return response
 
-#gets all podcasts
+load_dotenv()
+
+def authpi():
+    apikey = os.environ.get("PODCAST_INDEX_KEY")
+    apisecret = os.environ.get("PODCAST_INDEX_SECRET")
+    apitime = str(int(time.time()))
+    auth_string = apikey + apisecret + str(apitime)
+    api_hash = hashlib.sha1(auth_string.encode("utf-8")).hexdigest()
+    headers = {
+        "User-Agent": "Mp3SyncThing/0.1",
+        "X-Auth-Key": apikey,
+        "X-Auth-Date": apitime,
+        "Authorization": api_hash,
+    }
+    return headers
+
 def getdata():
     with open("podcasts.json", "r") as f:
         loaddata = json.load(f)
-    return loaddata
-
-#adds a podcast to the database
-def addpodcast(url):
-    loaddata=getdata()
-    response=requests.post(f"{os.environ.get('AUDIOBOOKSHELF_BASE_URL')}/api/podcasts/feed", json={"rssFeed": url}, headers={"Authorization": f"Bearer {os.environ.get('AUDIOBOOKSHELF_API_KEY')}"})
-    title=(response.json()['podcast']['metadata']['title'])
-    title=title.replace(" ", "-")
-    title = title.replace("&", "and")
-    title = title.replace("/", "-")
-    title = title.replace(":", "")
-    title = title.replace("?", "")
-    title = title.replace(",", "")
-    title = title.replace(".", "")
+        return loaddata
+def addpodcast(id):
+    data=getdata()
+    data["podcasts"][str(id)] = {
+        "last_episode_time": 0
+    }
     with open("podcasts.json", "w") as f:
-        loaddata["podcasts"][unquote(url)] = {"slug": title, "last_episode": ""}
-        json.dump(loaddata, f, indent=4)
-    return "Podcast added"
+        json.dump(data, f, indent=4)
 
-#gets metadata of a podcast
-def getpodcast(slug):
-    if pingaudiobookshelf().status_code == 200:
-        podcasts = getdata()["podcasts"]
-        for url, data in podcasts.items():
-            if data["slug"] == slug:
-                rss=url
-                break
 
-        metadata=[]
-        headers= {
-            "Authorization": f"Bearer {os.environ.get('AUDIOBOOKSHELF_API_KEY')}",
-            "Content-Type": "application/json"
-        }
-        data = {
-            "rssFeed": rss
-        }
-        response = requests.post(f"{os.environ.get('AUDIOBOOKSHELF_BASE_URL')}/api/podcasts/feed", headers=headers, json=data)
-        metadata.append(response.json()['podcast']['metadata']['title'])
-        metadata.append(response.json()['podcast']['metadata']['description'])
-        metadata.append(response.json()['podcast']['metadata']['image'])
-        metadata.append(getdata()["podcasts"][rss]["slug"])
-        metadata.append(rss)
-        return metadata
+def getpodcastinfo(id):
+    response=requests.get(f"https://api.podcastindex.org/api/1.0/podcasts/byfeedid?id={id}", headers=authpi())
+    response.raise_for_status()
+    info=[id, response.json()["feed"]["title"], response.json()["feed"]["description"], response.json()["feed"]["artwork"]]
+    return info
 
-#gets recent episodes of a podcast
-def getrecentepisodes(url):
+def getrecentepisode(id):
+    lasttime=getdata()["podcasts"][id]["last_episode_time"]
+    response=requests.get(f"https://api.podcastindex.org/api/1.0/episodes/byfeedid?id={id}&since={lasttime}&max=1", headers=authpi())
+    response.raise_for_status()
+    episodes=response.json()["items"]
+    episode=(episodes)[0]["title"], episodes[0]["enclosureUrl"], episodes[0]["datePublished"]
+    return episode
 
+def getrecentepisodes(id):
+    lasttime=getdata()["podcasts"][id]["last_episode_time"]
+    response=requests.get(f"https://api.podcastindex.org/api/1.0/episodes/byfeedid?id={id}&since={lasttime}&max=10", headers=authpi())
+    response.raise_for_status()
+    episodes=response.json()["items"]
+    episodes.reverse()
+    episodeslist=[]
+    for episode in episodes:
+        episodeslist.append(episode["title"])
+    return episodeslist
+
+def getpodcasts():
     loaddata=getdata()
-    data=loaddata
-    global rssurl
-    rssurl=unquote(url)
-    lastepisode=data["podcasts"][url]["last_episode"]
-    headers= {
-            "Authorization": f"Bearer {os.environ.get('AUDIOBOOKSHELF_API_KEY')}",
-            "Content-Type": "application/json"
-    }
-    data = {
-        "rssFeed": rssurl
-    }
-    response = requests.post(f"{os.environ.get('AUDIOBOOKSHELF_BASE_URL')}/api/podcasts/feed", headers=headers, json=data)
-    episodes = response.json()['podcast']['episodes']
-    recent = episodes[0]['title']
-    print(lastepisode)
-    #To Test
+    info=[]
+    for infos in loaddata["podcasts"]:
+        info.append(getpodcastinfo(infos))
+    return info
 
-    if lastepisode != recent:
-        recentepisodes = []
-        for i, ep in enumerate(episodes):
-            if lastepisode != ep['title']:
-                recentepisodes.append({'title': ep['title'], "url": ep['enclosure']["url"]})
-                continue
-            else:
-                print(type(recentepisodes), recentepisodes)
-                return recentepisodes
-        else:
-            print(type(recentepisodes), recentepisodes)
-            return [{'title':episodes[len(episodes)-1]['title'], "url": episodes[len(episodes)-1]['enclosure']["url"]}]
-    else:
-        return []
-
-def upload(url, name, slug):
+def upload(id):
     loaddata=getdata()
-    r = requests.get(url, stream=True, allow_redirects=True)
+    episodes=getrecentepisode(id)
+    title=episodes[0]["title"]
+    url=episodes[0]["enclosureUrl"]
+    datepublished=episodes[0]["datePublished"]
+
+    r=requests.get(url, stream=True, allow_redirects=True)
     content_type = r.headers.get("Content-Type", "").split(";")[0].strip()
     ext = mimetypes.guess_extension(content_type) or ".mp3"
-    name1=re.sub(r'[\\/:*?"<>|#&]', "-", name).strip()
-    name = f"{name}{ext}"
+    name1=re.sub(r'[\\/:*?"<>|#&]', "-", title).strip()
+    name = f"{title}{ext}"
     name = re.sub(r'[\\/:*?"<>|#&ea]', "l", name).strip()
     with open(name, "wb") as f:
         for chunk in r.iter_content(chunk_size=65536):
@@ -119,34 +95,20 @@ def upload(url, name, slug):
         f"{name1}.mp3"
     ], check=True)
     requests.post(f"http://{os.environ.get('HIBY_URL')}:4399/upload", data={"path": "/data/mnt/sd_0/testing/Podcast/"}, files={"files[]": open(f"{name1}.mp3", "rb")})
-    rss=getpodcast(slug)[4]
-    loaddata["podcasts"][rss]["last_episode"] = name
+    loaddata["podcasts"][id]["last_episode_time"] = datepublished
     with open("podcasts.json", "w") as f:
         json.dump(loaddata, f, indent=4)
     os.remove(f"{name}")
     os.remove(f"{name1}.mp3")
     return name1 + " Uploaded"
 
-# Gets all podcasts
-def getpodcasts():
+def deletepodcast(id):
     loaddata=getdata()
-    slugs = [data["slug"] for data in loaddata["podcasts"].values()]
-    with ThreadPool() as pool:
-        return pool.map(getpodcast, slugs)
-
-# Deletes a podcast
-def deletepodcast(url):
-    loaddata=getdata()
-    if url in loaddata["podcasts"]:
-        loaddata["podcasts"].pop(url)
+    if id in loaddata["podcasts"]:
+        loaddata["podcasts"].pop(id)
         with open("podcasts.json", "w") as f:
             json.dump(loaddata, f, indent=4)
             return "Podcast deleted"
     return "Podcast not found"
 
-def settings(setting, value):
-    if setting == "hiby-url":
-        os.environ["HIBY_URL"] = value
-    if setting == "api-key":
-        os.environ["AUDIOBOOKSHELF_API_KEY"] = value
-
+#TODO: Add settings
