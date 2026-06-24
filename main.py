@@ -6,22 +6,11 @@ from fastapi import Query
 import subprocess
 import os
 app = FastAPI()
-def trigger_git_pull():
-    try:
-        result = subprocess.run(
-            ["git", "pull"],
-            capture_output=True,
-            text=True,
-            timeout=15
-        )
-        os.system("sudo systemctl restart hiby")
-        return result.returncode == 0
-    except Exception:
-        return False
+
 # This is the fastapi file which serves the api for the frontend. (When it works)
 @app.post("/webhook")
-def webhook(background_tasks: BackgroundTasks):
-    background_tasks.add_task(trigger_git_pull)
+def webhook():
+    subprocess.run(['bash', 'pull.sh'])
     return {"status": "Pulling"}
 # Gets the recent episodes of a podcast
 @app.get("/podcast/recent")
