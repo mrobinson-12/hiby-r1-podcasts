@@ -26,9 +26,16 @@ def authpi():
     return headers
 
 def getdata():
+    if not os.path.exists("podcasts.json"):
+        default_data = {"podcasts": {}}
+        with open("podcasts.json", "w") as f:
+            json.dump(default_data, f, indent=4)
+        return default_data
+
     with open("podcasts.json", "r") as f:
         loaddata = json.load(f)
         return loaddata
+    
 def addpodcast(id):
     data=getdata()
     data["podcasts"][str(id)] = {
