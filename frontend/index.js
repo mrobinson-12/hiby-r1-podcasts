@@ -1,4 +1,3 @@
-pingbutton = document.getElementById("ping")
 response = document.getElementById("response")
 getbutton = document.getElementById("get")
 addbutton = document.getElementById("add-new")
@@ -7,13 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     getbutton.click()
 })
 
-pingbutton.addEventListener("click", () => {
-    fetch("/ping")
-        .then(response => response.text())
-        .then(data => {
-            response.textContent = data
-        })
-})
 
 getbutton.addEventListener("click", () => {
     document.getElementById("podcasts").innerHTML = '';
@@ -21,11 +13,11 @@ getbutton.addEventListener("click", () => {
         .then(response => response.text())
         .then(data => {
             images = JSON.parse(data)
-            images.forEach(([name, description, url, slug, rss]) => {
+            images.forEach(([id, title, description, image]) => {
                 div=document.createElement("a")
-                div.href="/podcast/"+slug
+                div.href="/podcast/"+id
                 img1 = document.createElement("img")
-                img1.src = url
+                img1.src = image
                 img1.className="w-48 mr-2"
                 //text=document.createElement("p")
                 //text.textContent=name
@@ -39,8 +31,8 @@ getbutton.addEventListener("click", () => {
 })
 
 addbutton.addEventListener("click", () => {
-    const rss = prompt("Enter the rss link:")
-    fetch("/podcast/new?url="+rss, {
+    const id = prompt("Enter the id:")
+    fetch("/podcast/new?id="+id, {
         method: "GET"
     })
         .then(response => response.text())
@@ -52,3 +44,4 @@ addbutton.addEventListener("click", () => {
 })
 
 //TODO UI Redo
+//TODO Add searching

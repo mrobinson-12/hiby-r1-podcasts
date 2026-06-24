@@ -22,7 +22,7 @@ dist/
 # IDE/editor settings
 .idea/
 .vscode/
-
 # macOS system files
 .DS_Store
+podcasts.json
 
