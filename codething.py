@@ -114,7 +114,7 @@ def deletepodcast(id):
     loaddata=getdata()
     if id in loaddata["podcasts"]:
         loaddata["podcasts"].pop(id)
-        with open(os.path.join(os.path.abspath(__file__), "podcasts.json"), "w") as f:
+        with open("podcasts.json", "w") as f:
             json.dump(loaddata, f, indent=4)
             return "Podcast deleted"
     return "Podcast not found"
