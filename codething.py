@@ -113,7 +113,7 @@ def upload(id):
 def deletepodcast(id):
     loaddata=getdata()
     if id in loaddata["podcasts"]:
-        loaddata["podcasts"].pop(id)
+        loaddata["podcasts"].pop(str(id))
         with open("podcasts.json", "w") as f:
             json.dump(loaddata, f, indent=4)
             return "Podcast deleted"
