@@ -1,4 +1,0 @@
-Need to save:
-- Last timestamp from episode uploaded
-- Podcast internal ID as slug
-- Podcast search by term to add
