@@ -11,12 +11,9 @@ To set this up, just populate your .env with proper values then install the requ
 
 - USB support
 - More documentation
-- Add comments (I know I should) 70%
 - Fix the HTML UI (it is ugly)
 - Add music support
 - Add audiobook support (My audiobooks)
-- Fix bug where it doesn't upload because of the file type
-
 
 If you would like another MP3 player added feel free to open an issue or make a pull request i'll try to be active!
 
