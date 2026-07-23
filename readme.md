@@ -1,6 +1,7 @@
 # MP3 Sync for Hiby R1
 
 This is a simple tool I made to sync my podcasts and music to my mp3 player, the Hiby R1. It is a tool with a python backend and html frontend which can be hosted pretty much anywhere. It is designed to be used with the upload via network on the player but USB support is coming soon. Hopefully you find it useful.
+![img](https://cdn.hackclub.com/019f8d8f-22b6-745d-b908-9012cb3a76b6/image.png.webp)
 
 ### SETUP
 
@@ -24,7 +25,11 @@ This is not endorsed by or affiliated with Hiby or the Hiby R1 product. Any word
 - Autocomplete used
 - Claude used when I had actually had no clue but no copy pasting just explaining.
 
-This is being submitted for macondo, a program run by Hack Club. Hack Club is a non-profit and US registered 501(c)3 charity which encourages teens to code, learn to code and create open source projects. Feel free to check their new flagship program out [here](https://stardance.hackclub.com/a-anmph).
+This is being submitted for Horizons, a program run by Hack Club. Hack Club is a non-profit and US registered 501(c)3 charity which encourages teens to code, learn to code and create open source projects. Feel free to check their new flagship program out [here](https://stardance.hackclub.com/a-anmph).
+
+
+
+This was prevously submitted to Macondo but because of review times i decided to unship it.
 
 ### License
 This project is licensed under the MIT License permitting you to do whatever you want with it basically I think.
