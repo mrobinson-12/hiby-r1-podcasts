@@ -2,6 +2,7 @@
 
 This is a simple tool I made to sync my podcasts and music to my mp3 player, the Hiby R1. It is a tool with a python backend and html frontend which can be hosted pretty much anywhere. It is designed to be used with the upload via network on the player but USB support is coming soon. Hopefully you find it useful.
 ![img](https://cdn.hackclub.com/019f8d8f-22b6-745d-b908-9012cb3a76b6/image.png.webp)
+Video: https://cdn.hackclub.com/019fba97-0486-7755-b3db-7881c11ccf9b/2026-08-01%2009-48-16.mov
 
 ### SETUP
 
