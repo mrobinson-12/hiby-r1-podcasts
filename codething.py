@@ -80,17 +80,18 @@ def getpodcasts():
 
 def upload(id):
     loaddata=getdata()
-    episodes=getrecentepisode(id)
-    title=episodes[0]["title"]
-    url=episodes[0]["enclosureUrl"]
-    datepublished=episodes[0]["datePublished"]
+    title, url, datepublished = getrecentepisode(id)
+    # title=episodes[0]["title"]
+    # url=episodes[0]["enclosureUrl"]
+    # datepublished=episodes[0]["datePublished"]
 
     r=requests.get(url, stream=True, allow_redirects=True)
     content_type = r.headers.get("Content-Type", "").split(";")[0].strip()
     ext = mimetypes.guess_extension(content_type) or ".mp3"
-    name1=re.sub(r'[\\/:*?"<>|#&]', "-", title).strip()
+    name1=re.sub(r'[\\/:*?"<>|#&]', "", title).strip()
     name = f"{title}{ext}"
     name = re.sub(r'[\\/:*?"<>|#&ea]', "l", name).strip()
+    
     with open(name, "wb") as f:
         for chunk in r.iter_content(chunk_size=65536):
             f.write(chunk)
@@ -100,7 +101,7 @@ def upload(id):
         "-ar", "16000",
         "-ac", "1",
         "-c:a", "libmp3lame",
-        f"{name1}.mp3"
+        f"./{name1}.mp3"
     ], check=True)
     requests.post(f"http://{os.environ.get('HIBY_URL')}:4399/upload", data={"path": "/data/mnt/sd_0/testing/Podcast/"}, files={"files[]": open(f"{name1}.mp3", "rb")})
     loaddata["podcasts"][id]["last_episode_time"] = datepublished
@@ -113,8 +114,8 @@ def upload(id):
 def deletepodcast(id):
     loaddata=getdata()
     if id in loaddata["podcasts"]:
-        loaddata["podcasts"].pop(id)
-        with open(os.path.join(os.path.abspath(__file__), "podcasts.json"), "w") as f:
+        loaddata["podcasts"].pop(str(id))
+        with open("podcasts.json", "w") as f:
             json.dump(loaddata, f, indent=4)
             return "Podcast deleted"
     return "Podcast not found"
